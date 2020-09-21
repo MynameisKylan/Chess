@@ -4,7 +4,7 @@ require './lib/MovesGraph'
 
 describe MovesGraph do
   describe '#build_graph' do
-    let(:transformations) { (-1..1).to_a.repeated_permutation(2).to_a }
+    let(:transformations) { [-7, 7].repeated_permutation(2).to_a }
     let(:graph) { MovesGraph.new(transformations) }
 
     it 'populates @squares' do
@@ -22,6 +22,15 @@ describe MovesGraph do
 
     it '@squares has values that are Sets' do
       expect(graph.squares[graph.squares.keys[0]].class).to eql(Set)
+    end
+
+    it '@squares is correct' do
+      expected = MovesGraph.new(transformations).squares
+      expected[[0, 0]] << [7, 7]
+      expected[[7, 7]] << [0, 0]
+      graph.build_graph
+
+      expect(graph.squares).to eql(expected)
     end
   end
 end

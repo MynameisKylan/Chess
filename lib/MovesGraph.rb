@@ -8,11 +8,11 @@ class MovesGraph
   end
 
   def build_graph(queue = [@start], seen = Set.new)
-    if @squares.keys.sort == seen.sort
+    start = queue.shift
+    if @squares.keys.sort == seen.sort || start.nil?
       # pp @squares
       return
-    else
-      start = queue.shift
+    elsif !seen.include?(start)
       possible_moves = []
       @move_rules.each do |transformation|
         move = transformation.zip(start).map { |pair| pair.sum }
@@ -21,6 +21,7 @@ class MovesGraph
       # p 'possible moves: ' + possible_moves.to_s
       possible_moves.each do |move|
         next if start == move
+
         # p 'evaluating move: ' + move.to_s
         if !seen.include?(start) && move[0].between?(0, 7) && move[1].between?(0,7)
           add_edge(start, move)
@@ -30,14 +31,15 @@ class MovesGraph
         end
       end
       seen << start
-      build_graph(queue, seen)
     end
+
+    build_graph(queue, seen)
   end
 
   private
 
   def add_edge(square1, square2)
-    # p "Added edge between #{square1} and #{square2}"
+    p "Added edge between #{square1} and #{square2}"
     @squares[square1] << square2
     @squares[square2] << square1
   end
@@ -46,7 +48,7 @@ class MovesGraph
     squares = {}
     (0..7).each do |i|
       (0..7).each do |j|
-        squares[[i,j]] = Set.new
+        squares[[i, j]] = Set.new
       end
     end
     squares
