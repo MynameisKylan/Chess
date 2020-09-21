@@ -2,8 +2,9 @@
 
 require './lib/MovesGraph'
 require './lib/move_permutation'
+require './lib/piece'
 
-class Knight
+class Knight < Piece
   @@transformations = [[2, 1], [1, 2], [-1, 2], [2, -1]]
   @@moves = nil
   def initialize

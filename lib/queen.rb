@@ -1,7 +1,10 @@
+# queen.rb
+
 require './lib/move_permutation'
 require './lib/MovesGraph'
+require './lib/piece'
 
-class Queen
+class Queen < Piece
   # filter for diagonal or straight-line transformations
   @@transformations = MOVES.filter { |p| p[0].abs == p[1].abs || p[0].zero? || p[1].zero? }
   @@moves = nil

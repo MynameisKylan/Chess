@@ -2,8 +2,9 @@
 
 require './lib/move_permutations'
 require './lib/MoveGraph'
+require './lib/piece'
 
-class Rook
+class Rook < Piece
   # filter for straight-line transformations
   @@transformations = MOVES.filter { |p| p[0].zero? || p[1].zero? }
   @@moves = nil

@@ -2,8 +2,9 @@
 
 require './lib/move_permutations'
 require './lib/MoveGraph'
+require './lib/piece'
 
-class Bishop
+class Bishop < Piece
   # filter for diagonal transformations
   @@transformations = MOVES.filter { |p| p[0].abs == p[1].abs }
   @@moves = nil
