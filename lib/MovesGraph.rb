@@ -7,22 +7,6 @@ class MovesGraph
     @squares = initialize_squares
   end
 
-  def add_edge(square1, square2)
-    # p "Added edge between #{square1} and #{square2}"
-    @squares[square1] << square2
-    @squares[square2] << square1
-  end
-
-  private def initialize_squares
-    squares = {}
-    (0..7).each do |i|
-      (0..7).each do |j|
-        squares[[i,j]] = Set.new
-      end
-    end
-    squares
-  end
-
   def build_graph(queue = [@start], seen = Set.new)
     if @squares.keys.sort == seen.sort
       # pp @squares
@@ -49,4 +33,23 @@ class MovesGraph
       build_graph(queue, seen)
     end
   end
+
+  private
+
+  def add_edge(square1, square2)
+    # p "Added edge between #{square1} and #{square2}"
+    @squares[square1] << square2
+    @squares[square2] << square1
+  end
+
+  def initialize_squares
+    squares = {}
+    (0..7).each do |i|
+      (0..7).each do |j|
+        squares[[i,j]] = Set.new
+      end
+    end
+    squares
+  end
+
 end
