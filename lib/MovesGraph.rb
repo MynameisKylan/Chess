@@ -39,7 +39,7 @@ class MovesGraph
   private
 
   def add_edge(square1, square2)
-    p "Added edge between #{square1} and #{square2}"
+    # p "Added edge between #{square1} and #{square2}"
     @squares[square1] << square2
     @squares[square2] << square1
   end

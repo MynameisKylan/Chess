@@ -32,5 +32,23 @@ describe MovesGraph do
 
       expect(graph.squares).to eql(expected)
     end
+
+    it '@squares is correct' do
+      expected = MovesGraph.new([7, 0].repeated_permutation(2).to_a).squares
+      expected[[0, 0]] << [7, 7]
+      expected[[0, 0]] << [7, 0]
+      expected[[0, 0]] << [0, 7]
+      expected[[7, 0]] << [0, 0]
+      expected[[7, 0]] << [7, 7]
+      expected[[0, 7]] << [0, 0]
+      expected[[0, 7]] << [7, 7]
+      expected[[7, 7]] << [0, 0]
+      expected[[7, 7]] << [7, 0]
+      expected[[7, 7]] << [0, 7]
+
+      graph = MovesGraph.new([7, 0].repeated_permutation(2).to_a)
+      graph.build_graph
+      expect(graph.squares).to eql(expected)
+    end
   end
 end
