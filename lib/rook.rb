@@ -10,10 +10,10 @@ class Rook
 
   def initialize
     if @@moves.nil?
-      p 'loading rook moves'
+      p 'loading Rook moves'
       @@moves = MoveGraph.new(@@transformations)
       @@moves.build_graph
-      p 'rook moves loaded'
+      p 'Rook moves loaded'
     end
   end
 end

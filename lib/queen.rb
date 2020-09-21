@@ -8,10 +8,10 @@ class Queen
 
   def initialize()
     if @@moves.nil?
-      p 'loading queen moves'
+      p 'loading Queen moves'
       @@moves = MovesGraph.new(@@transformations)
       @@moves.build_graph
-      p 'queen loaded'
+      p 'Queen moves loaded'
     end
   end
 end

@@ -10,10 +10,10 @@ class Bishop
 
   def initialize
     if @@moves.nil?
-      p 'loading bishop moves'
+      p 'loading Bishop moves'
       @@moves = MoveGraph.new(@@transformations)
       @@moves.build_graph
-      p 'bishop moves loaded'
+      p 'Bishop moves loaded'
     end
   end
 end
