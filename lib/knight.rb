@@ -5,7 +5,7 @@ require './lib/move_permutation'
 require './lib/piece'
 
 class Knight < Piece
-  @transformations = [[2, 1], [1, 2], [-1, 2], [2, -1]]
+  @transformations = [[2, 1], [1, 2], [-1, 2], [2, -1], [-1, -2]]
   @moves = nil
 
   class << self
