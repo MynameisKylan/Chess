@@ -17,7 +17,7 @@ class Rook < Piece
   def initialize
     if self.class.moves.nil?
       p 'loading Rook moves'
-      self.class.moves = MoveGraph.new(self.class.transformations)
+      self.class.moves = MovesGraph.new(self.class.transformations)
       self.class.moves.build_graph
       p 'Rook moves loaded'
     end

@@ -17,7 +17,7 @@ class Bishop < Piece
   def initialize
     if self.class.moves.nil?
       p 'loading Bishop moves'
-      self.class.moves = MoveGraph.new(self.class.transformations)
+      self.class.moves = MovesGraph.new(self.class.transformations)
       self.class.moves.build_graph
       p 'Bishop moves loaded'
     end
