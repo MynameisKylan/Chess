@@ -1,14 +1,38 @@
 # board.rb
 
+require './lib/rook'
+require './lib/knight'
+require './lib/bishop'
+require './lib/queen'
+require './lib/king'
+require './lib/pawn'
+
 class Board
   def initialize
     @squares = Array.new(8) { Array.new(8) }
     @pieces = []
   end
 
-  def add_piece(piece, square)
-    @pieces << piece
-    @squares[square[0]][square[1]] = piece
+  def populate_board
+    add_piece(Rook.new('white'), [0, 0])
+    add_piece(Rook.new('white'), [7, 0])
+    add_piece(Knight.new('white'), [1, 0])
+    add_piece(Knight.new('white'), [6, 0])
+    add_piece(Bishop.new('white'), [2, 0])
+    add_piece(Bishop.new('white'), [5, 0])
+    add_piece(Queen.new('white'), [3, 0])
+    add_piece(King.new('white'), [4, 0])
+    8.times { |i| add_piece(Pawn.new('white'), [i, 1]) }
+
+    add_piece(Rook.new('black'), [0, 7])
+    add_piece(Rook.new('black'), [7, 7])
+    add_piece(Knight.new('black'), [1, 7])
+    add_piece(Knight.new('black'), [6, 7])
+    add_piece(Bishop.new('black'), [2, 7])
+    add_piece(Bishop.new('black'), [5, 7])
+    add_piece(Queen.new('black'), [3, 7])
+    add_piece(King.new('black'), [4, 7])
+    8.times { |i| add_piece(Pawn.new('black'), [i, 6]) }
   end
 
   def empty?(square)
@@ -28,10 +52,15 @@ class Board
   end
 
   def display
-    
+
   end
 
   private
+
+  def add_piece(piece, square)
+    @pieces << piece
+    @squares[square[0]][square[1]] = piece
+  end
 
   def get_transformation(from, to)
     # get adjacent-square transformation required to build path between from and to
