@@ -52,7 +52,12 @@ class Board
   end
 
   def display
-
+    rows = @squares.map { |col| col.map { |piece| piece.nil? ? ' ' : piece.symbol } }.reverse.transpose
+    puts '-' * 33
+    rows.each do |row|
+      puts '| ' + row.join(' | ') + ' |'
+      puts '-' * 33
+    end
   end
 
   private

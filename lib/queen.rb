@@ -9,6 +9,8 @@ class Queen < Piece
   @transformations = MOVES.filter { |p| p[0].abs == p[1].abs || p[0].zero? || p[1].zero? }
   @moves = nil
 
+  attr_reader :symbol
+
   class << self
     attr_accessor :moves
     attr_reader :transformations

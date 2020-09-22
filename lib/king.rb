@@ -8,6 +8,8 @@ class King < Piece
   @transformations = (0..1).to_a.repeated_permutation(2).to_a
   @moves = nil
 
+  attr_reader :symbol
+
   class << self
     attr_accessor :moves
     attr_reader :transformations

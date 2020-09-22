@@ -8,6 +8,8 @@ class Knight < Piece
   @transformations = [[2, 1], [1, 2], [-1, 2], [2, -1], [-1, -2]]
   @moves = nil
 
+  attr_reader :symbol
+
   class << self
     attr_accessor :moves
     attr_reader :transformations
