@@ -1,7 +1,7 @@
 # rook.rb
 
-require './lib/move_permutations'
-require './lib/MoveGraph'
+require './lib/MovesGraph'
+require './lib/move_permutation'
 require './lib/piece'
 
 class Rook < Piece
@@ -21,5 +21,10 @@ class Rook < Piece
       self.class.moves.build_graph
       p 'Rook moves loaded'
     end
+    @can_castle = true
+  end
+
+  def can_castle?
+    @can_castle
   end
 end

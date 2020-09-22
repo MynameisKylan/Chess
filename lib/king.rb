@@ -1,7 +1,7 @@
 # king.rb
 
-require './lib/move_permutations'
-require './lib/MoveGraph'
+require './lib/move_permutation'
+require './lib/MovesGraph'
 require './lib/piece'
 
 class King < Piece
@@ -16,9 +16,14 @@ class King < Piece
   def initialize
     if self.class.moves.nil?
       p 'loading King moves'
-      self.class.moves = MoveGraph.new(self.class.transformations)
+      self.class.moves = MovesGraph.new(self.class.transformations)
       self.class.moves.build_graph
       p 'King moves loaded'
     end
+    @can_castle = true
+  end
+
+  def can_castle?
+    @can_castle
   end
 end

@@ -1,7 +1,7 @@
 # bishop.rb
 
-require './lib/move_permutations'
-require './lib/MoveGraph'
+require './lib/MovesGraph'
+require './lib/move_permutation'
 require './lib/piece'
 
 class Bishop < Piece
