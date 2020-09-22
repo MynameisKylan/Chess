@@ -51,13 +51,19 @@ class Board
     true
   end
 
-  def display
-    rows = @squares.map { |col| col.map { |piece| piece.nil? ? ' ' : piece.symbol } }.reverse.transpose
-    puts '-' * 33
+  def display(color = 'white')
+    # black pieces are solid color
+    rows = @squares.map { |col| col.map { |piece| piece.nil? ? ' ' : piece.symbol } }.transpose
+    rows = rows.reverse if color == 'white'
+    rows = rows.map(&:reverse) if color == 'black'
+    row_nums = color == 'black' ? (1..8).to_a : (1..8).to_a.reverse
+    col_nums = color == 'black' ? ('A'..'H').to_a.reverse : ('A'..'H').to_a
+    puts ' ' * 5 + '-' * 33
     rows.each do |row|
-      puts '| ' + row.join(' | ') + ' |'
-      puts '-' * 33
+      puts ' ' * 4 + row_nums.shift.to_s + '| ' + row.join(' | ') + ' |'
+      puts ' ' * 5 + '-' * 33
     end
+    puts ' ' * 7 + col_nums.join('   ')
   end
 
   private
