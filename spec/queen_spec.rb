@@ -9,7 +9,6 @@ describe Queen do
     it 'returns true if it is a valid move' do
       expect(
         queen.valid_move?(
-          Queen.class_variable_get(:@@moves).squares,
           [0, 0],
           [6, 6]
         )
@@ -19,7 +18,6 @@ describe Queen do
     it 'returns false if move is invalid' do
       expect(
         queen.valid_move?(
-          Queen.class_variable_get(:@@moves).squares,
           [0, 0],
           [7, 6]
         )
@@ -29,7 +27,6 @@ describe Queen do
     it 'returns false if destination is same as start' do
       expect(
         queen.valid_move?(
-          Queen.class_variable_get(:@@moves).squares,
           [0, 0],
           [0, 0]
         )
