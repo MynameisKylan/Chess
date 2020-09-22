@@ -13,7 +13,7 @@ class King < Piece
     attr_reader :transformations
   end
 
-  def initialize
+  def initialize(color = 'white')
     if self.class.moves.nil?
       p 'loading King moves'
       self.class.moves = MovesGraph.new(self.class.transformations)
@@ -21,6 +21,7 @@ class King < Piece
       p 'King moves loaded'
     end
     @can_castle = true
+    @symbol = color == 'white' ? "\u2654".encode('utf-8') : "\u265A".encode('utf-8')
   end
 
   def can_castle?

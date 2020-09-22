@@ -14,12 +14,13 @@ class Bishop < Piece
     attr_reader :transformations
   end
 
-  def initialize
+  def initialize(color = 'white')
     if self.class.moves.nil?
       p 'loading Bishop moves'
       self.class.moves = MovesGraph.new(self.class.transformations)
       self.class.moves.build_graph
       p 'Bishop moves loaded'
     end
+    @symbol = color == 'white' ? "\u2657".encode('utf-8') : "\u265D".encode('utf-8')
   end
 end

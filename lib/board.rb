@@ -27,6 +27,10 @@ class Board
     true
   end
 
+  def display
+    
+  end
+
   private
 
   def get_transformation(from, to)

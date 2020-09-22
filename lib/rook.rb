@@ -14,7 +14,7 @@ class Rook < Piece
     attr_reader :transformations
   end
 
-  def initialize
+  def initialize(color = 'white')
     if self.class.moves.nil?
       p 'loading Rook moves'
       self.class.moves = MovesGraph.new(self.class.transformations)
@@ -22,6 +22,7 @@ class Rook < Piece
       p 'Rook moves loaded'
     end
     @can_castle = true
+    @symbol = color == 'white' ? "\u2656".encode('utf-8') : "\u265C".encode('utf-8')
   end
 
   def can_castle?
