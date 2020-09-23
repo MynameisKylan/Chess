@@ -5,7 +5,7 @@ require './lib/piece'
 
 class Pawn < Piece
   # filter for straight-line transformations
-  @transformations = [[-1, 1], [0, 1], [1, 1], [0, 2]]
+  @transformations = [[-1, 1], [0, 1], [1, 1], [0, -1]]
   @moves = nil
 
   attr_reader :symbol
@@ -20,6 +20,8 @@ class Pawn < Piece
       p 'loading Pawn moves'
       self.class.moves = MovesGraph.new(self.class.transformations)
       self.class.moves.build_graph
+      first_moves = generate_first_moves
+      self.class.moves.add_edges(first_moves)
       p 'Pawn moves loaded'
     end
     @first_move = true
@@ -28,5 +30,16 @@ class Pawn < Piece
 
   def first_move?
     @first_move
+  end
+
+  private
+
+  def generate_first_moves
+    first_moves = []
+    (0..7).each do |col|
+      first_moves << [[col, 1], [col, 3]]
+      first_moves << [[col, 6], [col, 4]]
+    end
+    first_moves
   end
 end
