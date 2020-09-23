@@ -40,6 +40,7 @@ class Board
   end
 
   def valid_move?(from, to)
+    # checks for collision
     piece = @squares[from[0]][from[1]]
     return false unless piece.valid_move?(from, to)
 
@@ -79,7 +80,7 @@ class Board
 
     squares.each do |square|
       piece = get_piece(square)
-      return true if piece.color != color && piece.valid_move?(square, king_square)
+      return true if piece.color != color && valid_move?(square, king_square)
     end
     false
   end
@@ -89,14 +90,28 @@ class Board
   def get_visible_squares(king_square)
     # helper for #check?
     # get all squares that could be putting the king in check
+    get_non_knight_squares(king_square) + get_knight_squares(king_square)
+  end
+
+  def get_non_knight_squares(king_square)
     squares = []
-    transformations = (-1..1).to_a.repeated_permutation(2).to_a + (-2..2).to_a.permutation(2).to_a
+    transformations = (-1..1).to_a.repeated_permutation(2).to_a
     transformations.each do |trans|
       square = king_square
       loop do
         square = square.zip(trans).map { |pair| pair.reduce(&:+) }
-        break if !valid_square?(square) || !empty?(square) 
+        break if !valid_square?(square) || !empty?(square)
       end
+      squares << square if valid_square?(square) && !empty?(square)
+    end
+    squares
+  end
+
+  def get_knight_squares(king_square)
+    squares = []
+    transformations = [[2, 1], [1, 2], [-1, 2], [-1, -2], [1, -2], [2, -1], [-2, -1], [-2, 1]]
+    transformations.each do |trans|
+      square = king_square.zip(trans).map { |pair| pair.reduce(&:+) }
       squares << square if valid_square?(square) && !empty?(square)
     end
     squares
@@ -131,8 +146,10 @@ class Board
     # build path of every square between from and to given transformation vector
     position = from
     path = []
-    while position != to
+    loop do
       position = position.zip(transformation).map { |pair| pair.reduce(&:+) }
+      break if position == to
+
       path << position
     end
     path

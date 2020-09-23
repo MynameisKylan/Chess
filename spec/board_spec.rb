@@ -73,22 +73,36 @@ describe Board do
         @board = Board.new
         @queen = Queen.new
         @board.add_piece(@queen, [4, 3])
+        @board.add_piece(@queen, [5, 7])
+        @board.add_piece(@queen, [1, 3])
       end
 
       it 'true for diagonal foward move' do
         expect(@board.valid_move?([4, 3], [7, 6])).to be true
       end
 
-      it 'true for diagonal backwards move' do
+      it 'true for diagonal backwards downwards move' do
         expect(@board.valid_move?([4, 3], [1, 0])).to be true
       end
 
-      it 'true for straight-line move' do
+      it 'true for diagonal downwards move' do
+        expect(@board.valid_move?([1, 3], [4, 0])).to be true
+      end
+
+      it 'true for diagonal backwards upwards move' do
+        expect(@board.valid_move?([4, 3], [1, 6])).to be true
+      end
+
+      it 'true for lateral move' do
         expect(@board.valid_move?([4, 3], [4, 7])).to be true
       end
 
+      it 'true for vertical move' do
+        expect(@board.valid_move?([5, 7], [5, 0])).to be true
+      end
+
       it 'true for straight-line backwards move' do
-        expect(@board.valid_move?([4, 3], [0, 3])).to be true
+        expect(@board.valid_move?([4, 3], [2, 3])).to be true
       end
 
       it 'false for move not straight-line or diagonal' do
@@ -109,7 +123,7 @@ describe Board do
 
   describe '#check?' do
     context 'king on E1' do
-      before(:all) do
+      before(:each) do
         @board = Board.new
         @queen = Queen.new('white')
         @king = King.new('black')
@@ -120,19 +134,31 @@ describe Board do
         expect(@board.check?('black')).to be false
       end
 
-      it 'black king is in straight-line check' do
-        @board.add_piece(@queen, [4, 7])
-        expect(@board.check?('black')).to be true
+      context 'white queen on E8' do
+        it 'black king is in straight-line check' do
+          @board.add_piece(@queen, [4, 7])
+          expect(@board.check?('black')).to be true
+        end
+
+        it 'check is blocked by another piece' do
+          @board.add_piece(@queen, [4, 7])
+          @board.add_piece(Queen.new('black'), [4, 3])
+          expect(@board.check?('black')).to be false
+        end
       end
 
-      it 'black king is in diagonal check' do
-        @board.add_piece(@queen, [1, 3])
-        expect(@board.check?('black')).to be true
+      context 'white queen on A4' do
+        it 'black king is in diagonal check' do
+          @board.add_piece(@queen, [1, 3])
+          expect(@board.check?('black')).to be true
+        end
       end
 
-      it 'black king is in check by knight' do
-        @board.add_piece(Knight.new('white'), [5, 2])
-        expect(@board.check?('black')).to be true
+      context 'white knight on G2' do
+        it 'black king is in check by knight' do
+          @board.add_piece(Knight.new('white'), [6, 1])
+          expect(@board.check?('black')).to be true
+        end
       end
     end
   end
