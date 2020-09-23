@@ -72,37 +72,37 @@ describe Board do
       before(:all) do
         @board = Board.new
         @queen = Queen.new
-        @board.add_piece(@queen, [3, 3])
+        @board.add_piece(@queen, [4, 3])
       end
 
       it 'true for diagonal foward move' do
-        expect(@board.valid_move?([3, 3], [7, 7])).to be true
+        expect(@board.valid_move?([4, 3], [7, 6])).to be true
       end
 
       it 'true for diagonal backwards move' do
-        expect(@board.valid_move?([3, 3], [0, 0])).to be true
+        expect(@board.valid_move?([4, 3], [1, 0])).to be true
       end
 
       it 'true for straight-line move' do
-        expect(@board.valid_move?([3, 3], [3, 7])).to be true
+        expect(@board.valid_move?([4, 3], [4, 7])).to be true
       end
 
       it 'true for straight-line backwards move' do
-        expect(@board.valid_move?([3, 3], [0, 3])).to be true
+        expect(@board.valid_move?([4, 3], [0, 3])).to be true
       end
 
       it 'false for move not straight-line or diagonal' do
-        expect(@board.valid_move?([3, 3], [0, 4])).to be false
+        expect(@board.valid_move?([4, 3], [0, 4])).to be false
       end
 
       it 'false if piece is in the way of straight-line' do
-        @board.add_piece(Knight.new, [5, 3])
-        expect(@board.valid_move?([3, 3], [7, 3])).to be false
+        @board.add_piece(Knight.new, [6, 3])
+        expect(@board.valid_move?([4, 3], [7, 3])).to be false
       end
 
       it 'false if piece in in the way of diagonal' do
-        @board.add_piece(Queen.new, [1, 1])
-        expect(@board.valid_move?([3, 3], [0, 0])).to be false
+        @board.add_piece(Queen.new, [2, 1])
+        expect(@board.valid_move?([4, 3], [1, 0])).to be false
       end
     end
   end

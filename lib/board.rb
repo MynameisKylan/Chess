@@ -66,12 +66,12 @@ class Board
     puts ' ' * 7 + col_nums.join('   ')
   end
 
-  private
-
   def add_piece(piece, square)
     @pieces << piece
     @squares[square[0]][square[1]] = piece
   end
+
+  private
 
   def get_transformation(from, to)
     # get adjacent-square transformation required to build path between from and to
