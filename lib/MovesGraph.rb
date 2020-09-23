@@ -36,7 +36,18 @@ class MovesGraph
     build_graph(queue, seen)
   end
 
+  def add_edges(edges)
+    # edges = [ [from, to] ]
+    edges.each do |from, to|
+      add_one_way_edge(from, to)
+    end
+  end
+
   private
+
+  def add_one_way_edge(square1, square2)
+    @squares[square1] << square2
+  end
 
   def add_edge(square1, square2)
     # p "Added edge between #{square1} and #{square2}"
