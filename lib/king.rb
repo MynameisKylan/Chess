@@ -8,7 +8,7 @@ class King < Piece
   @transformations = (0..1).to_a.repeated_permutation(2).to_a
   @moves = nil
 
-  attr_reader :symbol
+  attr_reader :symbol, :color
 
   class << self
     attr_accessor :moves
@@ -22,6 +22,7 @@ class King < Piece
       self.class.moves.build_graph
       p 'King moves loaded'
     end
+    @color = color
     @can_castle = true
     @symbol = color == 'white' ? "\u2654".encode('utf-8') : "\u265A".encode('utf-8')
   end

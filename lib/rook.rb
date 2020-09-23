@@ -9,7 +9,7 @@ class Rook < Piece
   @transformations = MOVES.filter { |p| p[0].zero? || p[1].zero? }
   @moves = nil
 
-  attr_reader :symbol
+  attr_reader :symbol, :color
 
   class << self
     attr_accessor :moves
@@ -23,6 +23,7 @@ class Rook < Piece
       self.class.moves.build_graph
       p 'Rook moves loaded'
     end
+    @color = color
     @can_castle = true
     @symbol = color == 'white' ? "\u2656".encode('utf-8') : "\u265C".encode('utf-8')
   end

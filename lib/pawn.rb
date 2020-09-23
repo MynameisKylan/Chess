@@ -8,7 +8,7 @@ class Pawn < Piece
   @transformations = [[-1, 1], [0, 1], [1, 1], [0, -1]]
   @moves = nil
 
-  attr_reader :symbol
+  attr_reader :symbol, :color
 
   class << self
     attr_accessor :moves

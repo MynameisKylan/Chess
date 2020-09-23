@@ -8,7 +8,7 @@ class Knight < Piece
   @transformations = [[2, 1], [1, 2], [-1, 2], [2, -1], [-1, -2]]
   @moves = nil
 
-  attr_reader :symbol
+  attr_reader :symbol, :color
 
   class << self
     attr_accessor :moves
@@ -22,6 +22,7 @@ class Knight < Piece
       self.class.moves.build_graph
       p 'Knight moves loaded'
     end
+    @color = color
     @symbol = color == 'white' ? "\u2658".encode('utf-8') : "\u265E".encode('utf-8')
   end
 

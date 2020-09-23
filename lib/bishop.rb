@@ -9,7 +9,7 @@ class Bishop < Piece
   @transformations = MOVES.filter { |p| p[0].abs == p[1].abs }
   @moves = nil
 
-  attr_reader :symbol
+  attr_reader :symbol, :color
 
   class << self
     attr_accessor :moves
@@ -23,6 +23,7 @@ class Bishop < Piece
       self.class.moves.build_graph
       p 'Bishop moves loaded'
     end
+    @color = color
     @symbol = color == 'white' ? "\u2657".encode('utf-8') : "\u265D".encode('utf-8')
   end
 end
