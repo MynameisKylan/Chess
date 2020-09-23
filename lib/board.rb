@@ -10,7 +10,7 @@ require './lib/pawn'
 class Board
   def initialize
     @squares = Array.new(8) { Array.new(8) }
-    @pieces = []
+    @pieces = {}
   end
 
   def populate_board
@@ -67,13 +67,55 @@ class Board
   end
 
   def add_piece(piece, square)
-    @pieces << piece
+    @pieces[piece.class] ||= []
+    @pieces[piece.class] << square
     @squares[square[0]][square[1]] = piece
+  end
+
+  def check?(color)
+    king_square = get_location(King, color)
+
+    squares = get_visible_squares(king_square)
+
+    squares.each do |square|
+      piece = get_piece(square)
+      return true if piece.color != color && piece.valid_move?(square, king_square)
+    end
+    false
   end
 
   private
 
+  def get_visible_squares(king_square)
+    # helper for #check?
+    # get all squares that could be putting the king in check
+    squares = []
+    transformations = (-1..1).to_a.repeated_permutation(2).to_a + (-2..2).to_a.permutation(2).to_a
+    transformations.each do |trans|
+      square = king_square
+      loop do
+        square = square.zip(trans).map { |pair| pair.reduce(&:+) }
+        break if !valid_square?(square) || !empty?(square) 
+      end
+      squares << square if valid_square?(square) && !empty?(square)
+    end
+    squares
+  end
+
+  def get_piece(square)
+    @squares[square[0]][square[1]]
+  end
+
+  def valid_square?(square)
+    square[0].between?(0, 7) && square[1].between?(0, 7)
+  end
+
+  def get_location(piece, color)
+    @pieces[piece].detect { |loc| @squares[loc[0]][loc[1]].color == color }
+  end
+
   def get_transformation(from, to)
+    # helper for #valid_move?
     # get adjacent-square transformation required to build path between from and to
     trans = to.zip(from).map{ |pair| pair.reduce(&:-) }
     col = trans[0]
@@ -85,6 +127,7 @@ class Board
   end
 
   def build_path(from, to, transformation)
+    # helper for #valid_move?
     # build path of every square between from and to given transformation vector
     position = from
     path = []
@@ -96,6 +139,7 @@ class Board
   end
 
   def path_empty?(path)
+    # helper for #valid_move?
     path.all? { |square| empty?(square) }
   end
 end

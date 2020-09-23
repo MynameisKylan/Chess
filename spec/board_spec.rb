@@ -107,4 +107,33 @@ describe Board do
     end
   end
 
+  describe '#check?' do
+    context 'king on E1' do
+      before(:all) do
+        @board = Board.new
+        @queen = Queen.new('white')
+        @king = King.new('black')
+        @board.add_piece(@king, [4, 0])
+      end
+
+      it 'black king is not in check' do
+        expect(@board.check?('black')).to be false
+      end
+
+      it 'black king is in straight-line check' do
+        @board.add_piece(@queen, [4, 7])
+        expect(@board.check?('black')).to be true
+      end
+
+      it 'black king is in diagonal check' do
+        @board.add_piece(@queen, [1, 3])
+        expect(@board.check?('black')).to be true
+      end
+
+      it 'black king is in check by knight' do
+        @board.add_piece(Knight.new('white'), [5, 2])
+        expect(@board.check?('black')).to be true
+      end
+    end
+  end
 end
