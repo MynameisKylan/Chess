@@ -24,12 +24,17 @@ class Pawn < Piece
       self.class.moves.add_edges(first_moves)
       p 'Pawn moves loaded'
     end
-    @first_move = true
+    @color = color
     @symbol = color == 'white' ? "\u2659".encode('utf-8') : "\u265F".encode('utf-8')
   end
 
-  def first_move?
-    @first_move
+  def valid_move?(from, to)
+    diff = to[1] - from[1]
+    # ensure pawns are uni-directional
+    return false if @color == 'white' && diff.negative?
+    return false if @color == 'black' && diff.positive?
+
+    super
   end
 
   private

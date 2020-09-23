@@ -32,4 +32,37 @@ describe Pawn do
       end
     end
   end
+
+  describe '#valid_move?' do
+    let(:white) { Pawn.new('white') }
+    let(:black) { Pawn.new('black') }
+    
+    context 'testing first move rule' do
+      it 'pawn can move two squares if it is first move' do
+        expect(white.valid_move?([6, 1], [6, 3])).to be true
+      end
+
+      it 'pawn cannot move two square if not first move' do
+        expect(white.valid_move?([6, 2], [6, 4])).to be false
+      end
+    end
+
+    context 'testing directionality' do
+      it 'white pawn can move in the (+) direction' do
+        expect(white.valid_move?([3, 3], [3, 4])).to be true
+      end
+
+      it 'white pawn cannot move in the (-) direction' do
+        expect(white.valid_move?([3, 3], [3, 2])).to be false
+      end
+
+      it 'black pawn can move in the (-) direction' do
+        expect(black.valid_move?([5, 6], [5, 5])).to be true
+      end
+
+      it 'black pawn cannot move in the (+) direction' do
+        expect(black.valid_move?([5, 6], [5, 7])).to be false
+      end
+    end
+  end
 end
