@@ -44,10 +44,11 @@ class Board
     piece = @squares[from[0]][from[1]]
     return false unless piece.valid_move?(from, to)
 
+    destination = @squares[to[0]][to[1]]
     if piece.class != Knight
       trans = get_transformation(from, to)
       path = build_path(from, to, trans)
-      return false unless path_empty?(path)
+      return false unless path_empty?(path) && (destination.nil? || destination.color != piece.color)
     end
     true
   end
@@ -68,32 +69,96 @@ class Board
   end
 
   def add_piece(piece, square)
-    @pieces[piece.class] ||= []
-    @pieces[piece.class] << square
+    @pieces[piece.color] ||= []
+    @pieces[piece.color] << square
+    # p 'added ' + piece.to_s
     @squares[square[0]][square[1]] = piece
   end
 
-  def check?(color)
+  def in_check(color)
+    # returns attacking squares or nil if not in check
     king_square = get_location(King, color)
+    # p @pieces
+    # p 'king_square = ' + king_square.to_s
 
     squares = get_visible_squares(king_square)
 
+    attackers = []
     squares.each do |square|
       piece = get_piece(square)
-      return true if piece.color != color && valid_move?(square, king_square)
+      attackers << square if piece.color != color && valid_move?(square, king_square)
     end
-    false
+    # p 'king_square = ' + king_square.to_s
+    # p 'attackers = ' + attackers.to_s
+    attackers.empty? ? nil : attackers
+  end
+
+  def checkmate?(color)
+    attackers = in_check(color)
+    return false if attackers.nil?
+    # can king move out of check?
+    king_square = get_location(King, color)
+    king_moves = King.moves.squares[king_square].filter { |move| valid_move?(king_square, move) }
+    # p 'king moves = ' + king_moves.to_s
+    king_moves.each do |move|
+      simulated_board = simulate_move(king_square, move)
+      return false if simulated_board.in_check(color).nil?
+    end
+    # p 'king cannot move out of check'
+
+    # can attacker(s) be blocked or captured?
+    # p '@pieces = ' + @pieces.to_s
+    defenders = @pieces[color]
+    defenders.delete(king_square)
+    # p 'defenders = ' + defenders.to_s
+    attackers.each do |attacker_square|
+      attacker = @squares[attacker_square[0]][attacker_square[1]]
+      trans = get_transformation(king_square, attacker_square)
+      path = attacker.class == Knight ? attacker_square : build_path(king_square, attacker_square, trans) << attacker_square
+      # p 'path = ' + path.to_s
+      path.each do |square|
+        defenders.each do |defender_square|
+          # p 'defender_square = ' + defender_square.to_s
+          return false if valid_move?(defender_square, square)
+        end
+      end
+    end
+    true
+  end
+
+  def move_piece(from, to)
+    # untested
+    piece = @squares[from[0]][from[1]]
+    return unless valid_move?(from, to)
+
+    # update @pieces
+    @pieces[piece.color].delete(from)
+    @pieces[piece.color] << to
+
+    # update @squares
+    @squares[to[0]][to[1]] = piece
+    @squares[from[0]][from[1]] = nil
+  end
+
+  def simulate_move(from, to)
+    # untested
+    # returns a copy of self with a move simulated
+    board_copy = Marshal.load(Marshal.dump(self))
+    board_copy.move_piece(from, to)
+
+    board_copy
   end
 
   private
 
   def get_visible_squares(king_square)
-    # helper for #check?
+    # helper for #in_check
     # get all squares that could be putting the king in check
     get_non_knight_squares(king_square) + get_knight_squares(king_square)
   end
 
   def get_non_knight_squares(king_square)
+    # helper for #get_visible_squares
     squares = []
     transformations = (-1..1).to_a.repeated_permutation(2).to_a
     transformations.each do |trans|
@@ -108,6 +173,7 @@ class Board
   end
 
   def get_knight_squares(king_square)
+    # helper for #get_visible_squares
     squares = []
     transformations = [[2, 1], [1, 2], [-1, 2], [-1, -2], [1, -2], [2, -1], [-2, -1], [-2, 1]]
     transformations.each do |trans|
@@ -118,15 +184,18 @@ class Board
   end
 
   def get_piece(square)
+    # helper for #get_visible_squares
     @squares[square[0]][square[1]]
   end
 
   def valid_square?(square)
+    # helper for #get_visible_squares
     square[0].between?(0, 7) && square[1].between?(0, 7)
   end
 
   def get_location(piece, color)
-    @pieces[piece].detect { |loc| @squares[loc[0]][loc[1]].color == color }
+    # helper for #get_visible_squares
+    @pieces[color].detect { |loc| @squares[loc[0]][loc[1]].class == piece }
   end
 
   def get_transformation(from, to)

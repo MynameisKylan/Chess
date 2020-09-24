@@ -1,7 +1,6 @@
 # board_spec.rb
 
 require './lib/board'
-require './lib/knight'
 
 describe Board do
   let(:board) { Board.new }
@@ -68,7 +67,7 @@ describe Board do
       end
     end
 
-    context 'queen on D4' do
+    context 'queen on D4, E8, and B4' do
       before(:all) do
         @board = Board.new
         @queen = Queen.new
@@ -118,10 +117,14 @@ describe Board do
         @board.add_piece(Queen.new, [2, 1])
         expect(@board.valid_move?([4, 3], [1, 0])).to be false
       end
+
+      it 'false if target square is a friendly piece' do
+        expect(@board.valid_move?([4, 3], [1, 3])).to be false
+      end
     end
   end
 
-  describe '#check?' do
+  describe '#in_check' do
     context 'king on E1' do
       before(:each) do
         @board = Board.new
@@ -131,34 +134,119 @@ describe Board do
       end
 
       it 'black king is not in check' do
-        expect(@board.check?('black')).to be false
+        expect(@board.in_check('black')).to be nil
       end
 
       context 'white queen on E8' do
         it 'black king is in straight-line check' do
           @board.add_piece(@queen, [4, 7])
-          expect(@board.check?('black')).to be true
+          expect(@board.in_check('black')).to eql([[4, 7]])
         end
 
         it 'check is blocked by another piece' do
           @board.add_piece(@queen, [4, 7])
           @board.add_piece(Queen.new('black'), [4, 3])
-          expect(@board.check?('black')).to be false
+          expect(@board.in_check('black')).to be nil
         end
       end
 
       context 'white queen on A4' do
         it 'black king is in diagonal check' do
           @board.add_piece(@queen, [1, 3])
-          expect(@board.check?('black')).to be true
+          expect(@board.in_check('black')).to eql([[1, 3]])
         end
       end
 
       context 'white knight on G2' do
         it 'black king is in check by knight' do
           @board.add_piece(Knight.new('white'), [6, 1])
-          expect(@board.check?('black')).to be true
+          expect(@board.in_check('black')).to eql([[6, 1]])
         end
+      end
+    end
+  end
+
+  describe '#checkmate?' do
+    context 'king on D1' do
+      before(:each) do
+        @board = Board.new
+        @king = King.new('black')
+        @board.add_piece(@king, [3, 0])
+      end
+
+      it 'king can move out of check' do
+        @board.add_piece(Queen.new('white'), [7, 0])
+        expect(@board.checkmate?('black')).to be false
+      end
+
+      it 'king cannot move out of check' do
+        @board.add_piece(Queen.new('white'), [7, 0])
+        @board.add_piece(Rook.new('white'), [5, 1])
+        expect(@board.checkmate?('black')).to be true
+      end
+
+      it 'rook can capture attacking queen' do
+        @board.add_piece(Queen.new('white'), [7, 0])
+        @board.add_piece(Rook.new('white'), [5, 1])
+        @board.add_piece(Rook.new('black'), [7, 5])
+        expect(@board.checkmate?('black')).to be false
+      end
+
+      it 'rook can block attacking queen' do
+        @board.add_piece(Queen.new('white'), [7, 0])
+        @board.add_piece(Rook.new('white'), [5, 1])
+        @board.add_piece(Rook.new('black'), [6, 5])
+        expect(@board.checkmate?('black')).to be false
+      end
+
+      it 'knight can capture attacking queen' do
+        @board.add_piece(Queen.new('white'), [7, 0])
+        @board.add_piece(Rook.new('white'), [5, 1])
+        @board.add_piece(Knight.new('black'), [6, 2])
+        expect(@board.checkmate?('black')).to be false
+      end
+
+      it 'knight can block attacking queen' do
+        @board.add_piece(Queen.new('white'), [7, 0])
+        @board.add_piece(Rook.new('white'), [5, 1])
+        @board.add_piece(Knight.new('black'), [5, 2])
+        expect(@board.checkmate?('black')).to be false
+      end
+
+      it 'knight cannot capture or block attacking queen' do
+        @board.add_piece(Queen.new('white'), [7, 0])
+        @board.add_piece(Rook.new('white'), [5, 1])
+        @board.add_piece(Knight.new('black'), [6, 3])
+        expect(@board.checkmate?('black')).to be true
+      end
+
+      it 'king can capture attacking queen' do
+        @board.add_piece(Queen.new('white'), [4, 0])
+        @board.add_piece(Queen.new('black'), [2, 0])
+        @board.add_piece(Knight.new('black'), [3, 1])
+        @board.add_piece(Knight.new('black'), [2, 1])
+        expect(@board.checkmate?('black')).to be false
+      end
+
+      it 'king can move from multiple attackers' do
+        @board.add_piece(Queen.new('white'), [6, 0])
+        @board.add_piece(Queen.new('white'), [0, 3])
+        expect(@board.checkmate?('black')).to be false
+      end
+
+      it 'smother mate' do
+        @board.add_piece(Knight.new('black'), [2, 0])
+        @board.add_piece(Pawn.new('black'), [3, 1])
+        @board.add_piece(Pawn.new('black'), [2, 1])
+        @board.add_piece(Pawn.new('black'), [4, 1])
+        @board.add_piece(Knight.new('black'), [4, 0])
+        @board.add_piece(Knight.new('white'), [5, 1])
+        expect(@board.checkmate?('black')).to be true
+      end
+
+      it 'king can move from attacking knight' do
+        @board.add_piece(Knight.new('white'), [5, 1])
+        expect(@board.checkmate?('black')).to be false
       end
     end
   end
