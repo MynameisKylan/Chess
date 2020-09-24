@@ -122,6 +122,23 @@ describe Board do
         expect(@board.valid_move?([4, 3], [1, 3])).to be false
       end
     end
+
+    context 'testing diagonal pawn movement' do
+      before(:all) do
+        @board = Board.new
+        @pawn = Pawn.new
+        @board.add_piece(@pawn, [2, 2])
+      end
+
+      it 'pawn cannot move diagonally if target square is empty' do
+        expect(@board.valid_move?([2, 2], [3, 3])).to be false
+      end
+
+      it 'pawn can capture diagonally' do
+        @board.add_piece(Pawn.new('black'), [3, 3])
+        expect(@board.valid_move?([2, 2], [3, 3])).to be true
+      end
+    end
   end
 
   describe '#in_check' do

@@ -29,10 +29,10 @@ class Pawn < Piece
   end
 
   def valid_move?(from, to)
-    diff = to[1] - from[1]
+    y_diff = to[1] - from[1]
     # ensure pawns are uni-directional
-    return false if @color == 'white' && diff.negative?
-    return false if @color == 'black' && diff.positive?
+    return false if @color == 'white' && y_diff.negative?
+    return false if @color == 'black' && y_diff.positive?
 
     super
   end

@@ -55,6 +55,7 @@ class Board
     # checks for collision
     piece = get_piece(from)
     return false unless piece.valid_move?(from, to)
+    return false if diagonal_pawn?(piece, from, to) && get_piece(to).nil?
 
     destination = @squares[to[0]][to[1]]
     if piece.class != Knight
@@ -166,6 +167,12 @@ class Board
   end
 
   private
+
+  def diagonal_pawn?(piece, from, to)
+    x_diff = to[0] - from[0]
+    y_diff = to[1] - from[1]
+    piece.class == Pawn && !x_diff.zero? && !y_diff.zero?
+  end
 
   def simulate_move(from, to)
     # untested
