@@ -126,8 +126,11 @@ class Board
     true
   end
 
+
+
+  private
+
   def move_piece(from, to)
-    # untested
     piece = @squares[from[0]][from[1]]
     return unless valid_move?(from, to)
 
@@ -148,8 +151,6 @@ class Board
 
     board_copy
   end
-
-  private
 
   def get_visible_squares(king_square)
     # helper for #in_check
