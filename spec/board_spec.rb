@@ -314,5 +314,27 @@ describe Board do
       @board.add_piece(Queen.new('black'), [1, 6])
       expect(@board.legal_move?([1, 6], [2, 6])).to be true
     end
+
+    it 'true if capturing a piece' do
+      expect(@board.legal_move?([1, 6], [3, 6])).to be true
+    end
+  end
+
+  describe '#move_piece' do
+    before(:all) do
+      @board = Board.new
+      @board.add_piece(Queen.new('black'), [3, 7])
+      @board.add_piece(Queen.new('white'), [3, 6])
+    end
+    it '@pieces reflects the updated positions' do
+      @board.move_piece([3, 6], [4, 7])
+      expect(@board.instance_variable_get(:@pieces)['white']).to eql([[4, 7]])
+    end
+
+    it 'move_piece removes the captured piece from @pieces' do
+      @board.move_piece([4, 7], [3, 7])
+      expect(@board.instance_variable_get(:@pieces)['white']).to eql([[3, 7]])
+      expect(@board.instance_variable_get(:@pieces)['black'].empty?).to be true
+    end
   end
 end

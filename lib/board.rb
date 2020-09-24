@@ -154,10 +154,12 @@ class Board
   end
 
   def move_piece(from, to)
-    piece = @squares[from[0]][from[1]]
+    piece = get_piece(from)
+    target = get_piece(to)
     return unless valid_move?(from, to)
 
     # update @pieces
+    @pieces[target.color].delete(to) unless target.nil?
     @pieces[piece.color].delete(from)
     @pieces[piece.color] << to
 
