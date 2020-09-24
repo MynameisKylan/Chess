@@ -336,5 +336,19 @@ describe Board do
       expect(@board.instance_variable_get(:@pieces)['white']).to eql([[3, 7]])
       expect(@board.instance_variable_get(:@pieces)['black'].empty?).to be true
     end
+
+    context 'testing pawn promotion' do
+      it 'promotes white pawn to queen on reaching end of board' do
+        @board.add_piece(Pawn.new('white'), [4, 6])
+        @board.move_piece([4, 6], [4, 7])
+        expect(@board.instance_variable_get(:@squares)[4][7].class).to eql(Queen)
+      end
+
+      it 'promotes black pawn to queen on reaching end of board' do
+        @board.add_piece(Pawn.new('black'), [4, 1])
+        @board.move_piece([4, 1], [4, 0])
+        expect(@board.instance_variable_get(:@squares)[4][0].class).to eql(Queen)
+      end
+    end
   end
 end

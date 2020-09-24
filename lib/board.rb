@@ -54,7 +54,7 @@ class Board
   def valid_move?(from, to)
     # checks for collision
     piece = get_piece(from)
-    return false unless piece.valid_move?(from, to)
+    return false unless !piece.nil? && piece.valid_move?(from, to)
     return false if diagonal_pawn?(piece, from, to) && get_piece(to).nil?
 
     destination = @squares[to[0]][to[1]]
@@ -82,8 +82,9 @@ class Board
   end
 
   def add_piece(piece, square)
-    @pieces[piece.color] ||= []
-    @pieces[piece.color] << square
+    color = piece.color
+    @pieces[color] ||= []
+    @pieces[color] << square unless @pieces[color].include?(square)
     # p 'added ' + piece.to_s
     @squares[square[0]][square[1]] = piece
   end
@@ -166,9 +167,17 @@ class Board
     # update @squares
     @squares[to[0]][to[1]] = piece
     @squares[from[0]][from[1]] = nil
+
+    promote(to, Queen) if piece.class == Pawn && (to[1].zero? || to[1] == 7)
   end
 
   private
+
+  def promote(square, new_piece)
+    old_piece = get_piece(square)
+    color = old_piece.color
+    add_piece(new_piece.new(color), square)
+  end
 
   def diagonal_pawn?(piece, from, to)
     x_diff = to[0] - from[0]
