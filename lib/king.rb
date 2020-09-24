@@ -5,7 +5,7 @@ require './lib/MovesGraph'
 require './lib/piece'
 
 class King < Piece
-  @transformations = (0..1).to_a.repeated_permutation(2).to_a
+  @transformations = (-1..1).to_a.repeated_permutation(2).to_a
   @moves = nil
 
   attr_reader :symbol, :color

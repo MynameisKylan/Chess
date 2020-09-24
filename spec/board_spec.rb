@@ -250,4 +250,52 @@ describe Board do
       end
     end
   end
+
+  describe '#stalemate?' do
+    context 'king is only black piece on A8' do
+      before(:all) do
+        @board = Board.new
+        @king = King.new('black')
+        @board.add_piece(@king, [0, 7])
+      end
+
+      it 'king has no valid moves' do
+        @board.add_piece(Queen.new('white'), [2, 6])
+        expect(@board.stalemate?('black')).to be true
+      end
+
+      it 'king cannot move but pawn can' do
+        @board.add_piece(Pawn.new('black'), [2, 3])
+        expect(@board.stalemate?('black')).to be false
+      end
+    end
+  end
+
+  describe '#legal_move?' do
+    before(:all) do
+      @board = Board.new
+      @king = King.new('black')
+      @board.add_piece(@king, [0, 7])
+      @board.add_piece(Queen.new('white'), [3, 6])
+    end
+    it 'false when king tries to move into check' do
+      expect(@board.legal_move?([0, 7], [0, 6])).to be false
+    end
+
+    it 'false if moving defender puts king into check' do
+      @board.add_piece(Queen.new('black'), [0, 5])
+      @board.add_piece(Rook.new('white'), [0, 3])
+      expect(@board.legal_move?([0, 5], [1, 5])).to be false
+    end
+
+    it 'true if not moving king into check' do
+      @board.add_piece(Queen.new('black'), [1, 6])
+      expect(@board.legal_move?([0, 7], [0, 6])).to be true
+    end
+
+    it 'true if not exposing king when moving defender' do
+      @board.add_piece(Queen.new('black'), [1, 6])
+      expect(@board.legal_move?([1, 6], [2, 6])).to be true
+    end
+  end
 end

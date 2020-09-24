@@ -39,9 +39,21 @@ class Board
     @squares[square[0]][square[1]].nil?
   end
 
+  def legal_move?(from, to)
+    return false unless valid_move?(from, to)
+
+    # prevents moves that put you in check
+    color = get_piece(from).color
+    simulated_board = simulate_move(from, to)
+    # simulated_board.display
+    return false unless simulated_board.in_check(color).nil?
+
+    true
+  end
+
   def valid_move?(from, to)
     # checks for collision
-    piece = @squares[from[0]][from[1]]
+    piece = get_piece(from)
     return false unless piece.valid_move?(from, to)
 
     destination = @squares[to[0]][to[1]]
@@ -126,9 +138,19 @@ class Board
     true
   end
 
-
-
-  private
+  def stalemate?(color)
+    pieces = @pieces[color]
+    # p pieces
+    pieces.each do |square|
+      moves = get_piece(square).class.moves.squares[square]
+      moves.each do |move|
+        # p move
+        # p legal_move?(square, move)
+        return false if legal_move?(square, move)
+      end
+    end
+    true
+  end
 
   def move_piece(from, to)
     piece = @squares[from[0]][from[1]]
@@ -142,6 +164,8 @@ class Board
     @squares[to[0]][to[1]] = piece
     @squares[from[0]][from[1]] = nil
   end
+
+  private
 
   def simulate_move(from, to)
     # untested
