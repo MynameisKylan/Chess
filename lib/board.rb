@@ -157,7 +157,7 @@ class Board
   def move_piece(from, to)
     piece = get_piece(from)
     target = get_piece(to)
-    return unless valid_move?(from, to)
+    # return unless valid_move?(from, to)
 
     # update @pieces
     @pieces[target.color].delete(to) unless target.nil?
@@ -169,6 +169,48 @@ class Board
     @squares[from[0]][from[1]] = nil
 
     promote(to, Queen) if piece.class == Pawn && (to[1].zero? || to[1] == 7)
+  end
+
+  def castle(color, side)
+    king_square = get_location(King, color)
+    king = get_piece(king_square)
+    rook_x = side == 'queen' ? 0 : 7
+    rook_y = king_square[1]
+    rook_square = [rook_x, rook_y]
+    rook = get_piece(rook_square)
+    return unless king.can_castle? && rook.can_castle?
+
+    trans = get_transformation(king_square, rook_square)
+    path = build_path(king_square, rook_square, trans)
+    return unless path_empty?(path)
+
+    from = king_square
+    current_board = self
+    until path.empty?
+      square = path.shift
+      simulated_board = current_board.simulate_move(from, square)
+      return unless simulated_board.in_check(color).nil?
+
+      current_board = simulated_board
+      from = square
+    end
+    if rook_x > king_square[0]
+      new_king_square = [king_square[0] + 2, king_square[1]]
+      new_rook_square = [new_king_square[0] - 1, king_square[1]]
+    else
+      new_king_square = [king_square[0] - 2, king_square[1]]
+      new_rook_square = [new_king_square[0] + 1, king_square[1]]
+    end
+    move_piece(king_square, new_king_square)
+    move_piece(rook_square, new_rook_square)
+  end
+
+  def simulate_move(from, to)
+    # returns a copy of self with a move simulated
+    board_copy = Marshal.load(Marshal.dump(self))
+    board_copy.move_piece(from, to)
+
+    board_copy
   end
 
   private
@@ -183,15 +225,6 @@ class Board
     x_diff = to[0] - from[0]
     y_diff = to[1] - from[1]
     piece.class == Pawn && !x_diff.zero? && !y_diff.zero?
-  end
-
-  def simulate_move(from, to)
-    # untested
-    # returns a copy of self with a move simulated
-    board_copy = Marshal.load(Marshal.dump(self))
-    board_copy.move_piece(from, to)
-
-    board_copy
   end
 
   def get_visible_squares(king_square)

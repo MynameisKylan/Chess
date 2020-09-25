@@ -351,4 +351,41 @@ describe Board do
       end
     end
   end
+
+  describe 'castle' do
+    before(:each) do
+      @board = Board.new
+      @board.add_piece(King.new('white'), [4, 0])
+      @board.add_piece(Rook.new('white'), [7, 0])
+      @board.add_piece(Rook.new('white'), [0, 0])
+      @board.add_piece(King.new('black'), [4, 7])
+      @board.add_piece(Rook.new('black'), [7, 7])
+      @board.add_piece(Rook.new('black'), [0, 7])
+    end
+
+    it 'white king can castle king-side' do
+      @board.castle('white', 'king')
+      expect(@board.instance_variable_get(:@squares)[5][0].class).to eql(Rook)
+      expect(@board.instance_variable_get(:@squares)[6][0].class).to eql(King)
+    end
+
+    it 'white king can castle queen-side' do
+      @board.castle('white', 'queen')
+      expect(@board.instance_variable_get(:@squares)[3][0].class).to eql(Rook)
+      expect(@board.instance_variable_get(:@squares)[2][0].class).to eql(King)
+    end
+
+    it 'black king can castle king-side' do
+      @board.castle('black', 'king')
+      expect(@board.instance_variable_get(:@squares)[5][7].class).to eql(Rook)
+      expect(@board.instance_variable_get(:@squares)[6][7].class).to eql(King)
+    end
+
+    it 'black king can castle queen-side' do
+      @board.castle('black', 'queen')
+      expect(@board.instance_variable_get(:@squares)[3][7].class).to eql(Rook)
+      expect(@board.instance_variable_get(:@squares)[2][7].class).to eql(King)
+    end
+
+  end
 end
