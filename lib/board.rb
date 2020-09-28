@@ -11,6 +11,7 @@ class Board
   def initialize
     @squares = Array.new(8) { Array.new(8) }
     @pieces = {}
+    @last_move = nil
   end
 
   def populate_board
@@ -52,11 +53,19 @@ class Board
   end
 
   def valid_move?(from, to)
-    # checks for collision
     piece = get_piece(from)
     return false unless !piece.nil? && piece.valid_move?(from, to)
-    return false if diagonal_pawn?(piece, from, to) && get_piece(to).nil?
 
+    # special pawn handling
+    if piece.class == Pawn
+      if diagonal_pawn?(piece, from, to)
+        return true if valid_diagonal_pawn?(piece, from, to)
+
+        return false
+      end
+    end
+
+    # checks for collision - excluding knight
     destination = @squares[to[0]][to[1]]
     if piece.class != Knight
       trans = get_transformation(from, to)
@@ -157,6 +166,7 @@ class Board
   def move_piece(from, to)
     piece = get_piece(from)
     target = get_piece(to)
+    # can't check valid_move? for castling
     # return unless valid_move?(from, to)
 
     # update @pieces
@@ -167,6 +177,8 @@ class Board
     # update @squares
     @squares[to[0]][to[1]] = piece
     @squares[from[0]][from[1]] = nil
+
+    @last_move = [from, to]
 
     promote(to, Queen) if piece.class == Pawn && (to[1].zero? || to[1] == 7)
   end
@@ -224,7 +236,25 @@ class Board
   def diagonal_pawn?(piece, from, to)
     x_diff = to[0] - from[0]
     y_diff = to[1] - from[1]
-    piece.class == Pawn && !x_diff.zero? && !y_diff.zero?
+    return false unless piece.class == Pawn && !x_diff.zero? && !y_diff.zero?
+
+    true
+  end
+
+  def valid_diagonal_pawn?(piece, from, to)
+    # en passant rules
+    unless @last_move.nil?
+      last_from = @last_move[0]
+      last_to = @last_move[1]
+      last_piece = get_piece(last_to)
+      return true if (last_piece.class == Pawn) &&
+        (last_piece.color != piece.color) &&
+        (last_from[0] == from[0] + 1 || last_from[0] == from[0] - 1) &&
+        (last_from[1] == from[1] + 2 || last_from[1] == from[1] - 2)&&
+        (last_to[0] == to[0]) &&
+        (last_to[1] == from[1])
+    end
+    !get_piece(to).nil? && get_piece(to).color != piece.color
   end
 
   def get_visible_squares(king_square)

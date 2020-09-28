@@ -138,6 +138,42 @@ describe Board do
         @board.add_piece(Pawn.new('black'), [3, 3])
         expect(@board.valid_move?([2, 2], [3, 3])).to be true
       end
+
+      it 'pawn cannot move diagonally if target square has friendly piece' do
+        @board.add_piece(Pawn.new('white'), [3, 3])
+        expect(@board.valid_move?([2, 2], [3, 3])).to be false
+      end
+
+      context 'testing en passant' do
+        it 'pawn can capture pawn using en passant' do
+          @board.add_piece(Pawn.new('black'), [3, 6])
+          @board.add_piece(Pawn.new('white'), [2, 4])
+          @board.move_piece([3, 6], [3, 4])
+          expect(@board.valid_move?([2, 4], [3, 5])).to be true
+        end
+
+        it 'en passant is not valid if last move wasn\'t double pawn move' do
+          @board.add_piece(Pawn.new('black'), [3, 6])
+          @board.add_piece(Pawn.new('white'), [2, 4])
+          @board.add_piece(King.new('black'), [4, 7])
+          @board.move_piece([3, 6], [3, 4])
+          @board.move_piece([4, 7], [5, 7])
+          expect(@board.valid_move?([2, 4], [3, 5])).to be false
+        end
+
+        it 'en passant works on either side' do
+          @board.add_piece(Pawn.new('black'), [1, 6])
+          @board.move_piece([1, 6], [1, 4])
+          expect(@board.valid_move?([2, 4], [1, 5])).to be true
+        end
+
+        it 'en passant works for black too' do
+          @board.add_piece(Pawn.new('white'), [6, 1])
+          @board.add_piece(Pawn.new('black'), [5, 3])
+          @board.move_piece([6, 1], [6, 3])
+          expect(@board.valid_move?([5, 3], [6, 2])).to be true
+        end
+      end
     end
   end
 
