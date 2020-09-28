@@ -225,7 +225,66 @@ class Board
     board_copy
   end
 
+  def human_move_to_coordinates(human_move, player)
+    # examples: e4, Qh5, Nc6, Ngf3, Qxf7, O-O, O-O-O
+    files = { 'a' => 0,
+              'b' => 1,
+              'c' => 2,
+              'd' => 3,
+              'e' => 4,
+              'f' => 5,
+              'g' => 6,
+              'h' => 7 }
+    pieces = { 'Q' => Queen,
+               'K' => King,
+               'N' => Knight,
+               'B' => Bishop,
+               'R' => Rook }
+    parts = human_move.split('')
+    if parts.length == 2 || parts.length == 4 && files.include?(parts[0])
+      from, to = parse_pawn(parts, player, files)
+    elsif parts.length == 3 || parts.length == 4
+      from, to = parse_move(parts, player, files, pieces)
+    end
+
+    [from, to]
+  end
+
   private
+
+  def parse_move(parts, player, files, pieces)
+    # returns from/to coordinates given human input
+    # helper for human_move_to_coordinate
+    if parts.length == 3
+      piece, to_file, rank = parts
+      from_file = nil
+    elsif parts.length == 4
+      piece, from_file, to_file, rank = parts
+    end
+    move = [files[to_file.downcase], rank.to_i - 1]
+    if from_file.nil? || from_file == 'x'
+      from = get_location(pieces[piece.upcase], player.color).filter { |loc| get_piece(loc).valid_move?(loc, move) }.flatten
+    else
+      from = get_location(pieces[piece.upcase], player.color).filter { |loc| loc[0] == files[from_file] }. flatten
+    end
+    to = move
+
+    [from, to]
+  end
+
+  def parse_pawn(parts, player, files)
+    # returns from/to coordinates for pawn given human input
+    # helper for human_move_to_coordinate
+    if parts.length == 2
+      to = [files[parts[0]], parts[1].to_i - 1]
+      from = get_location(Pawn, player.color).filter { |loc| loc[0] == files[parts[0]] }.reduce { |highest, nxt| nxt[1] > highest[1] && nxt[1] < parts[1].to_i - 1 ? nxt : highest}
+    else
+      to = [files[parts[2]], parts[3].to_i - 1]
+      from = get_location(Pawn, player.color).filter { |loc| loc[0] == files[parts[0]] && get_piece(loc).valid_move?(loc, to) }.flatten
+    end
+
+    [from, to]
+  end
 
   def promote(square, new_piece)
     old_piece = get_piece(square)
@@ -301,7 +360,10 @@ class Board
 
   def get_location(piece, color)
     # helper for #get_visible_squares
-    @pieces[color].detect { |loc| @squares[loc[0]][loc[1]].class == piece }
+    if piece == King
+      return @pieces[color].detect { |loc| @squares[loc[0]][loc[1]].class == piece }
+    end
+    @pieces[color].filter { |loc| @squares[loc[0]][loc[1]].class == piece }
   end
 
   def get_transformation(from, to)

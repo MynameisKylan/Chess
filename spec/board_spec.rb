@@ -1,6 +1,7 @@
 # board_spec.rb
 
 require './lib/board'
+require './lib/player'
 
 describe Board do
   let(:board) { Board.new }
@@ -388,7 +389,7 @@ describe Board do
     end
   end
 
-  describe 'castle' do
+  describe '#castle' do
     before(:each) do
       @board = Board.new
       @board.add_piece(King.new('white'), [4, 0])
@@ -422,6 +423,66 @@ describe Board do
       expect(@board.instance_variable_get(:@squares)[3][7].class).to eql(Rook)
       expect(@board.instance_variable_get(:@squares)[2][7].class).to eql(King)
     end
+  end
 
+  describe '#human_move_to_coordiates' do
+    before(:all) do
+      @board = Board.new
+      @board.populate_board
+      @white = Player.new('white', 'white')
+      @black = Player.new('black', 'black')
+    end
+
+    context 'testing pawn selection' do
+      it 'returns correct from/to for a pawn' do
+        expect(@board.human_move_to_coordinates('e4', @white)).to eql([[4, 1], [4, 3]])
+      end
+
+      it 'selects correct pawn when pawns are stacked' do
+        @board.add_piece(Pawn.new, [4, 2])
+        expect(@board.human_move_to_coordinates('e4', @white)).to eql([[4, 2], [4, 3]])
+      end
+
+      it 'selects correct pawn if a pawn is in front of square to move to' do
+        @board.add_piece(Pawn.new, [4, 4])
+        expect(@board.human_move_to_coordinates('e4', @white)).to eql([[4, 2], [4, 3]])
+      end
+    end
+
+    context 'testing regular moves' do
+      it 'Nf3: selects correct knight' do
+        expect(@board.human_move_to_coordinates('Nf3', @white)).to eql([[6, 0], [5, 2]])
+      end
+
+      it 'Ra3: selects correct rook' do
+        expect(@board.human_move_to_coordinates('Ra3', @white)).to eql([[0, 0], [0, 2]])
+      end
+
+      it 'Bf4: selects correct bishop' do
+        expect(@board.human_move_to_coordinates('Bf4', @white)).to eql([[2, 0], [5, 3]])
+      end
+
+      it 'black Qd5: selects correct queen' do
+        expect(@board.human_move_to_coordinates('Qd5', @black)).to eql([[3, 7], [3, 4]])
+      end
+    end
+
+    context 'testing capture moves' do
+      it 'Nxf3: selects correct knight' do
+        @board.add_piece(Pawn.new('black'), [5, 2])
+        expect(@board.human_move_to_coordinates('Nxf3', @white)).to eql([[6, 0], [5, 2]])
+      end
+    end
+
+    context 'testing file-specified moves' do
+      it 'Ngf3: selects correct knight' do
+        @board.add_piece(Knight.new('white'), [7, 3])
+        expect(@board.human_move_to_coordinates('Ngf3', @white)).to eql([[6, 0], [5, 2]])
+      end
+
+      it 'exf3: correct pawn captures' do
+        expect(@board.human_move_to_coordinates('exf3', @white)).to eql([[4, 1], [5, 2]])
+      end
+    end
   end
 end
