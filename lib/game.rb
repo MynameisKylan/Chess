@@ -27,9 +27,9 @@ class Game
     white = @players.select { |p| p.color == 'white' }[0]
     @active_player = white
     @other_player = @players.select { |p| p.color == 'black' }[0]
-    puts "-" * 30
-    puts "#{white.name} is white and will go first"
-    puts "-" * 30
+    puts ' ' * 4 + "-" * 36
+    puts ' ' * 4 + "#{white.name} is white and will go first"
+    puts ' ' * 4 + "-" * 36
   end
 
   def play_turn
