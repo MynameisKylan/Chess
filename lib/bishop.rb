@@ -20,7 +20,7 @@ class Bishop < Piece
     if self.class.moves.nil?
       p 'loading Bishop moves'
       self.class.moves = MovesGraph.new(self.class.transformations)
-      self.class.moves.build_graph
+      self.class.moves.build_graph(queue = [[0, 0], [0, 1]])
       p 'Bishop moves loaded'
     end
     @color = color
