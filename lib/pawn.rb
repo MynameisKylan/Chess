@@ -18,10 +18,15 @@ class Pawn < Piece
   def initialize(color = 'white')
     if self.class.moves.nil?
       p 'loading Pawn moves'
-      self.class.moves = MovesGraph.new(self.class.transformations)
-      self.class.moves.build_graph
-      first_moves = generate_first_moves
-      self.class.moves.add_edges(first_moves)
+      begin
+        load_moves
+      rescue SystemCallError
+        self.class.moves = MovesGraph.new(self.class.transformations)
+        self.class.moves.build_graph
+        first_moves = generate_first_moves
+        self.class.moves.add_edges(first_moves)
+        save_moves
+      end
       p 'Pawn moves loaded'
     end
     @color = color
@@ -38,6 +43,18 @@ class Pawn < Piece
   end
 
   private
+
+  def save_moves
+    Dir.mkdir('lib/moves') unless Dir.exist?('lib/moves')
+    filename = 'lib/moves/pawn_moves.txt'
+    File.open(filename, 'w') { |file| file.puts Marshal.dump(self.class.moves) }
+  end
+
+  def load_moves
+    filename = 'lib/moves/pawn_moves.txt'
+    moves = Marshal.load(File.open(filename, 'r'))
+    self.class.moves = moves
+  end
 
   def generate_first_moves
     first_moves = []
