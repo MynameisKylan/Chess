@@ -11,7 +11,7 @@ def new_game
       game.load_game(load_name)
       puts 'Loading Success!'
     rescue
-      puts "#{load_name} save file not found. Starting new game."
+      puts "#{game.load_name} save file not found. Starting new game."
       game.assign_colors
     end
   else

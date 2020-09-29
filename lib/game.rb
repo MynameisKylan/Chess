@@ -42,14 +42,10 @@ class Game
       puts 'Illegal move. Please enter a legal move.'
       move = @active_player.get_move
       from, to = @board.human_move_to_coordinates(move, @active_player)
-      p 'FROM: ' + from.to_s
-      p 'TO: ' + to.to_s
     end
     @board.move_piece(from, to)
     @board.display(@active_player.color)
-    sleep(2)
-    
-
+    3.times { puts '-' * 30 }
   end
 
   def switch_active_player
