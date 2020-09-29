@@ -6,7 +6,7 @@ require './lib/piece'
 
 class Bishop < Piece
   # filter for diagonal transformations
-  @transformations = MOVES.filter { |p| p[0].abs == p[1].abs }
+  @transformations = MOVES.select { |p| p[0].abs == p[1].abs }
   @moves = nil
 
   attr_reader :symbol, :color

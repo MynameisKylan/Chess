@@ -122,7 +122,7 @@ class Board
     return false if attackers.nil?
     # can king move out of check?
     king_square = get_location(King, color)
-    king_moves = King.moves.squares[king_square].filter { |move| valid_move?(king_square, move) }
+    king_moves = King.moves.squares[king_square].select { |move| valid_move?(king_square, move) }
     # p 'king moves = ' + king_moves.to_s
     king_moves.each do |move|
       simulated_board = simulate_move(king_square, move)
@@ -264,9 +264,9 @@ class Board
     end
     move = [files[to_file.downcase], rank.to_i - 1]
     if from_file.nil? || from_file == 'x'
-      from = get_location(pieces[piece.upcase], player.color).filter { |loc| get_piece(loc).valid_move?(loc, move) }.flatten
+      from = get_location(pieces[piece.upcase], player.color).select { |loc| get_piece(loc).valid_move?(loc, move) }.flatten
     else
-      from = get_location(pieces[piece.upcase], player.color).filter { |loc| loc[0] == files[from_file] }.flatten
+      from = get_location(pieces[piece.upcase], player.color).select { |loc| loc[0] == files[from_file] }.flatten
     end
     to = move
 
@@ -278,10 +278,10 @@ class Board
     # helper for human_move_to_coordinate
     if parts.length == 2
       to = [files[parts[0]], parts[1].to_i - 1]
-      from = get_location(Pawn, player.color).filter { |loc| loc[0] == files[parts[0]] }.reduce { |highest, nxt| nxt[1] > highest[1] && nxt[1] < parts[1].to_i - 1 ? nxt : highest}
+      from = get_location(Pawn, player.color).select { |loc| loc[0] == files[parts[0]] }.reduce { |highest, nxt| nxt[1] > highest[1] && nxt[1] < parts[1].to_i - 1 ? nxt : highest}
     else
       to = [files[parts[2]], parts[3].to_i - 1]
-      from = get_location(Pawn, player.color).filter { |loc| loc[0] == files[parts[0]] && get_piece(loc).valid_move?(loc, to) }.flatten
+      from = get_location(Pawn, player.color).select { |loc| loc[0] == files[parts[0]] && get_piece(loc).valid_move?(loc, to) }.flatten
     end
 
     [from, to]
@@ -364,7 +364,7 @@ class Board
     if piece == King
       return @pieces[color].detect { |loc| @squares[loc[0]][loc[1]].class == piece }
     end
-    @pieces[color].filter { |loc| @squares[loc[0]][loc[1]].class == piece }
+    @pieces[color].select { |loc| @squares[loc[0]][loc[1]].class == piece }
   end
 
   def get_transformation(from, to)

@@ -6,7 +6,7 @@ require './lib/piece'
 
 class Queen < Piece
   # filter for diagonal or straight-line transformations
-  @transformations = MOVES.filter { |p| p[0].abs == p[1].abs || p[0].zero? || p[1].zero? }
+  @transformations = MOVES.select { |p| p[0].abs == p[1].abs || p[0].zero? || p[1].zero? }
   @moves = nil
 
   attr_reader :symbol, :color

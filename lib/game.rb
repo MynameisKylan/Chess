@@ -24,9 +24,9 @@ class Game
     @players.each do |p|
       p.color = colors.shift
     end
-    white = @players.filter { |p| p.color == 'white' }[0]
+    white = @players.select { |p| p.color == 'white' }[0]
     @active_player = white
-    @other_player = @players.filter { |p| p.color == 'black' }[0]
+    @other_player = @players.select { |p| p.color == 'black' }[0]
     puts "-" * 30
     puts "#{white.name} is white and will go first"
     puts "-" * 30

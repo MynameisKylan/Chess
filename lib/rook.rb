@@ -6,7 +6,7 @@ require './lib/piece'
 
 class Rook < Piece
   # filter for straight-line transformations
-  @transformations = MOVES.filter { |p| p[0].zero? || p[1].zero? }
+  @transformations = MOVES.select { |p| p[0].zero? || p[1].zero? }
   @moves = nil
 
   attr_reader :symbol, :color
