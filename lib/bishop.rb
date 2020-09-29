@@ -19,11 +19,30 @@ class Bishop < Piece
   def initialize(color = 'white')
     if self.class.moves.nil?
       p 'loading Bishop moves'
-      self.class.moves = MovesGraph.new(self.class.transformations)
-      self.class.moves.build_graph(queue = [[0, 0], [0, 1]])
+      begin
+        load_moves
+      rescue SystemCallError
+        self.class.moves = MovesGraph.new(self.class.transformations)
+        self.class.moves.build_graph(queue = [[0, 0], [0, 1]])
+        save_moves
+      end
       p 'Bishop moves loaded'
     end
     @color = color
     @symbol = color == 'white' ? "\u2657".encode('utf-8') : "\u265D".encode('utf-8')
+  end
+
+  private
+
+  def save_moves
+    Dir.mkdir('lib/moves') unless Dir.exist?('lib/moves')
+    filename = 'lib/moves/bishop_moves.txt'
+    File.open(filename, 'w') { |file| file.puts Marshal.dump(self.class.moves) }
+  end
+
+  def load_moves
+    filename = 'lib/moves/bishop_moves.txt'
+    moves = Marshal.load(File.open(filename, 'r'))
+    self.class.moves = moves
   end
 end
