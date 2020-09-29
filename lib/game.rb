@@ -4,7 +4,7 @@ require './lib/board'
 require './lib/player'
 
 class Game
-  attr_reader :players, :board, :active_player
+  attr_reader :players, :board, :active_player, :other_player
   def initialize(board = nil, players = [])
     @board = board.nil? ? Board.new : board
     @board.populate_board if board.nil?
@@ -53,7 +53,7 @@ class Game
   end
 
   def game_over(condition)
-    p "#{@active_player} is the winner by checkmate!" if condition == 'checkmate'
+    p "#{@active_player.name} is the winner by checkmate!" if condition == 'checkmate'
     p "It's a stalemate!" if condition == 'stalemate'
   end
 

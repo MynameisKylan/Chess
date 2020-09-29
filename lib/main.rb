@@ -21,10 +21,10 @@ def new_game
   ending = nil
   loop do
     game.play_turn
-    if game.board.checkmate?(game.active_player.color)
+    if game.board.checkmate?(game.other_player.color)
       ending = 'checkmate'
       break
-    elsif game.board.stalemate?(game.active_player.color)
+    elsif game.board.stalemate?(game.other_player.color)
       ending = 'stalemate'
       break
     else
