@@ -45,7 +45,7 @@ class Game
     end
     @board.move_piece(from, to)
     @board.display(@active_player.color)
-    3.times { puts '-' * 30 }
+    3.times { puts '-' * 42 }
   end
 
   def switch_active_player
@@ -65,15 +65,21 @@ class Game
   end
 
   def load_game(save_file)
-    saved_game = Marshal.load(File.open(save_file, 'r').readlines)
+    saved_game = Marshal.load(File.open(save_file, 'r'))
     @board = saved_game.board
     @players = saved_game.players
     @active_player = saved_game.active_player
+    @other_player = saved_game.other_player
     puts 'Game successfully loaded.'
   end
 
-  def prompt_save
-
+  def prompt_save?
+    print 'Would you like to save the game? (y/n): '
+    begin
+      answer = gets.chomp.downcase
+    end until ['y', 'n'].include?(answer)
+    return true if answer == 'y'
+    return false if answer == 'n'
   end
 
   def prompt_load?
@@ -87,6 +93,6 @@ class Game
   end
 
   def load_name
-    'saves/' + "#{players[0].name}" + '_' + "#{players[1].name}" + '_save.txt'
+    'saves/' + @players[0].name + '_' + @players[1].name + '_save.txt'
   end
 end

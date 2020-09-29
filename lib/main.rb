@@ -7,8 +7,8 @@ def new_game
   game.add_players
   if game.prompt_load?
     begin
-      puts "Loading #{filename}..."
-      game.load_game(load_name)
+      puts "Loading #{game.load_name}..."
+      game.load_game(game.load_name)
       puts 'Loading Success!'
     rescue
       puts "#{game.load_name} save file not found. Starting new game."
@@ -29,6 +29,7 @@ def new_game
       break
     else
       game.switch_active_player
+      game.save_game if game.prompt_save?
     end
   end
 
