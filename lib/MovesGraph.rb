@@ -1,3 +1,5 @@
+require 'set'
+
 class MovesGraph
   attr_reader :squares
   def initialize(start = [0,0], move_rules)

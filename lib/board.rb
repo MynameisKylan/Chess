@@ -36,10 +36,6 @@ class Board
     8.times { |i| add_piece(Pawn.new('black'), [i, 6]) }
   end
 
-  def empty?(square)
-    @squares[square[0]][square[1]].nil?
-  end
-
   def legal_move?(from, to)
     return false unless valid_move?(from, to)
 
@@ -53,6 +49,8 @@ class Board
   end
 
   def valid_move?(from, to)
+    return false if from.nil? || to.nil? || from.empty?
+
     piece = get_piece(from)
     return false unless !piece.nil? && piece.valid_move?(from, to)
 
@@ -66,12 +64,15 @@ class Board
     end
 
     # checks for collision - excluding knight
-    destination = @squares[to[0]][to[1]]
+    destination = get_piece(to)
     if piece.class != Knight
       trans = get_transformation(from, to)
       path = build_path(from, to, trans)
-      return false unless path_empty?(path) && (destination.nil? || destination.color != piece.color)
+    else
+      path = []
     end
+    return false unless path_empty?(path) && (destination.nil? || destination.color != piece.color)
+
     true
   end
 
@@ -265,7 +266,7 @@ class Board
     if from_file.nil? || from_file == 'x'
       from = get_location(pieces[piece.upcase], player.color).filter { |loc| get_piece(loc).valid_move?(loc, move) }.flatten
     else
-      from = get_location(pieces[piece.upcase], player.color).filter { |loc| loc[0] == files[from_file] }. flatten
+      from = get_location(pieces[piece.upcase], player.color).filter { |loc| loc[0] == files[from_file] }.flatten
     end
     to = move
 
@@ -395,5 +396,9 @@ class Board
   def path_empty?(path)
     # helper for #valid_move?
     path.all? { |square| empty?(square) }
+  end
+
+  def empty?(square)
+    @squares[square[0]][square[1]].nil?
   end
 end

@@ -1,18 +1,25 @@
 # player.rb
 
 class Player
-  attr_reader :name, :color
-  def initialize(name, color)
+  attr_reader :name
+  attr_accessor :color
+  def initialize(name, color = nil)
     @name = name
     @color = color
   end
 
   def prompt_move
-    print "#{name}, enter your move (see https://en.wikipedia.org/wiki/Chess#Notation_for_recording_moves for notation rules): "
+    print ">>>#{name}, enter your move: "
   end
 
   def get_move
-    gets.chomp
+    move = gets.chomp
+    until valid_move_format?(move)
+      puts "Invalid move format. Please see https://en.wikipedia.org/wiki/Chess#Notation_for_recording_moves for notation rules"
+      prompt_move
+      move = gets.chomp
+    end
+    move
   end
 
   def valid_move_format?(move)

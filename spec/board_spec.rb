@@ -37,17 +37,6 @@ describe Board do
     end
   end
 
-  describe '#empty?' do
-    it 'returns true if square is empty' do
-      expect(board.empty?([2, 2])).to be true
-    end
-
-    it 'returns false if square has a piece' do
-      board.add_piece(Knight.new, [2, 2])
-      expect(board.empty?([2, 2])).to be false
-    end
-  end
-
   describe '#valid_move?' do
     context 'knight on C4 - ignores collision' do
       before(:all) do
@@ -330,6 +319,7 @@ describe Board do
       @board = Board.new
       @king = King.new('black')
       @board.add_piece(@king, [0, 7])
+      @board.add_piece(King.new('white'), [6, 0])
       @board.add_piece(Queen.new('white'), [3, 6])
     end
     it 'false when king tries to move into check' do
@@ -354,6 +344,15 @@ describe Board do
 
     it 'true if capturing a piece' do
       expect(@board.legal_move?([1, 6], [3, 6])).to be true
+    end
+
+    it 'false if trying to move knight onto friendly piece' do
+      @board.add_piece(Knight.new('white'), [2, 4])
+      expect(@board.legal_move?([2, 4], [3, 6])).to be false
+    end
+
+    it 'false if trying to move queen onto friendly piece' do
+      expect(@board.legal_move?([3, 6], [0, 3])).to be false
     end
   end
 
